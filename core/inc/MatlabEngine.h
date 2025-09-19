@@ -1,7 +1,44 @@
 #pragma once
-#include "Matlab_global.h"
+#include "Matlab_base.h"
+#include "MatlabArray.h"
+#include <unordered_map>
+
+struct engine; // Forward declaration of mxArray
+typedef struct engine Engine;
 
 namespace Matlab
 {
-	class 
+	class MATLAB_API MatlabEngine
+	{
+		friend class MatlabArray;
+		MatlabEngine(const char* startcmd);
+		~MatlabEngine();
+	public:
+		static bool instantiate();
+		static bool instantiate(const char* startcmd, int retryCount = 10);
+		static bool destroy();
+		static bool isInstantiated();
+
+		static MatlabEngine* getInstance();
+		
+
+		static int eval(const char* command);
+
+		static bool addVariable(MatlabArray* var);
+		static bool removeVariable(const std::string& name);
+		static MatlabArray* getVariable(const std::string& name);
+		static std::vector<std::string> listVariables();
+
+
+	private:
+
+		static Engine* getEngine();
+		static bool updateVariableFromEngine(MatlabArray* var);
+		static bool sendVariableToEngine(MatlabArray* var);
+
+		static void err_matlabNotStarted();
+
+
+		std::unordered_map<std::string, MatlabArray*> m_variables; // map of variable name to MatlabArray
+	};
 }

@@ -1,0 +1,16 @@
+function [methods,structs,enuminfo,ThunkLibName] = user32proto
+% Prototype definitions for minimal Win32 API functions
+
+ThunkLibName = '';
+structs = [];
+enuminfo = [];
+
+methods = { ...
+    % HWND FindWindowA(LPCSTR lpClassName, LPCSTR lpWindowName);
+    {'FindWindowA', 'uint64', 'stdcall', 'user32.dll', ...
+        'uint64', {'string','string'}}, ...
+    % int GetWindowTextA(HWND hWnd, LPSTR lpString, int nMaxCount);
+    {'GetWindowTextA', 'int32', 'stdcall', 'user32.dll', ...
+        'uint64', {'uint64','string','int32'}} ...
+};
+end

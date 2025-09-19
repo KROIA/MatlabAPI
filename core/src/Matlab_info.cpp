@@ -105,18 +105,18 @@ namespace Matlab
 	}
 
 #ifdef QT_WIDGETS_AVAILABLE
-	void addRow(const QString& labelText, const QString& valueText, QGridLayout* layout, int row) {
+	void addRow(const QString& labelText, const QString& valueText, QGridLayout* m_layout, int row) {
 		QLabel* label = new QLabel(labelText);
 		label->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
-		layout->addWidget(label, row, 0);
+		m_layout->addWidget(label, row, 0);
 
 		QLabel* valueLabel = new QLabel(valueText);
-		layout->addWidget(valueLabel, row, 1);
+		m_layout->addWidget(valueLabel, row, 1);
 	}
 	QWidget* LibraryInfo::createInfoWidget(QWidget* parent)
 	{
 		QWidget* widget = new QWidget(parent);
-		QGridLayout* layout = new QGridLayout(widget);
+		QGridLayout* m_layout = new QGridLayout(widget);
 		
 		struct Pair 
 		{
@@ -136,10 +136,10 @@ namespace Matlab
 		};
 		int rowCount = 0;
 		for (const auto& pair : pairs) {
-			addRow(QString::fromStdString(pair.label), QString::fromStdString(pair.value), layout, rowCount++);
+			addRow(QString::fromStdString(pair.label), QString::fromStdString(pair.value), m_layout, rowCount++);
 		}
 
-		widget->setLayout(layout);
+		widget->setLayout(m_layout);
 		return widget;
 	}
 #else
