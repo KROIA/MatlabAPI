@@ -5,7 +5,7 @@
 #include <QThread>
 #include <QWindow>
 
-namespace Matlab
+namespace MatlabAPI
 {
     MatlabEmbeddedPlotWidget::MatlabEmbeddedPlotWidget(const QString& figureName, QWidget* parent)
         : QWidget(parent) 

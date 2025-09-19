@@ -2,7 +2,7 @@
 
 #include "UnitTest.h"
 #include "ui/PlotMainWindow.h"
-#include "Matlab.h"
+#include "MatlabAPI.h"
 //#include <QObject>
 //#include <QCoreapplication>
 

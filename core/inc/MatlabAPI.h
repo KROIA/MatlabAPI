@@ -4,7 +4,7 @@
 
 /// USER_SECTION_END
 
-#include "Matlab_info.h"
+#include "MatlabAPI_info.h"
 
 /// USER_SECTION_START 2
 #include "MatlabEngine.h"

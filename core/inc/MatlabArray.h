@@ -1,12 +1,12 @@
 #pragma once
-#include "Matlab_base.h"
+#include "MatlabAPI_base.h"
 #include <vector>
 #include <string>
 
 struct mxArray_tag; // Forward declaration of mxArray
 typedef struct mxArray_tag mxArray;
 
-namespace Matlab
+namespace MatlabAPI
 {
     class MATLAB_API MatlabEngine;
 

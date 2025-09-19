@@ -1,5 +1,5 @@
-#include "Matlab_info.h"
-#include "Matlab_debug.h"
+#include "MatlabAPI_info.h"
+#include "MatlabAPI_debug.h"
 
 /// USER_SECTION_START 1
 
@@ -11,7 +11,7 @@
 
 /// USER_SECTION_END
 
-namespace Matlab
+namespace MatlabAPI
 {
 	/// USER_SECTION_START 3
 
@@ -23,7 +23,7 @@ namespace Matlab
 		/// USER_SECTION_START 4
 
 		/// USER_SECTION_END
-#ifdef M_PROFILING
+#ifdef MATLAB_API_PROFILING
 		EASY_PROFILER_ENABLE;
 #endif
 		/// USER_SECTION_START 5
@@ -45,7 +45,7 @@ namespace Matlab
 		/// USER_SECTION_START 8
 
 		/// USER_SECTION_END
-#ifdef M_PROFILING
+#ifdef MATLAB_API_PROFILING
 		profiler::dumpBlocksToFile(profilerOutputFile);
 #else
 		(void)profilerOutputFile;

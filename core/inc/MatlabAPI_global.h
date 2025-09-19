@@ -6,17 +6,17 @@
 
 #include <chrono>
 // Params
-// <LIBRARY NAME SHORT>=M 
+// <LIBRARY NAME SHORT>=MATLAB_API 
 //
 #ifndef BUILD_STATIC
-	//#pragma message("MATLAB_LIB is a shared library")
-	#if defined(MATLAB_LIB)
+	//#pragma message("MATLAB_API_LIB is a shared library")
+	#if defined(MATLAB_API_LIB)
 		#define MATLAB_API __declspec(dllexport)
 	#else
 		#define MATLAB_API __declspec(dllimport)
 	#endif
 #else 
-	//#pragma message("MATLAB_LIB is a static library")
+	//#pragma message("MATLAB_API_LIB is a static library")
 	#define MATLAB_API
 #endif
 
@@ -44,13 +44,13 @@
 #endif
 
 
-#define M_UNUSED(x) (void)x;
+#define MATLAB_API_UNUSED(x) (void)x;
 
 /// USER_SECTION_START 4
 
 /// USER_SECTION_END
 
-#if defined(MATLAB_LIB)
+#if defined(MATLAB_API_LIB)
 	#pragma warning (error : 4715) // not all control paths return a value shuld be an error instead of a warning
 	#pragma warning (error : 4700) // uninitialized local variable used shuld be an error instead of a warning
 	#pragma warning (error : 4244) // Implicit conversions between data types 

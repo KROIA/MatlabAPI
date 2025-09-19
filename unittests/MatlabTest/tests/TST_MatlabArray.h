@@ -1,14 +1,14 @@
 #pragma once
 
 #include "UnitTest.h"
-#include "Matlab.h"
+#include "MatlabAPI.h"
 //#include <QObject>
 //#include <QCoreapplication>
 
 
 
 
-using namespace Matlab;
+using namespace MatlabAPI;
 class TST_MatlabArray : public UnitTest::Test
 {
 	TEST_CLASS(TST_MatlabArray)

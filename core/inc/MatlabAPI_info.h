@@ -4,8 +4,8 @@
 
 /// USER_SECTION_END
 
-#include "Matlab_global.h"
-#include "Matlab_debug.h"
+#include "MatlabAPI_global.h"
+#include "MatlabAPI_debug.h"
 
 #include <sstream>
 
@@ -22,7 +22,7 @@ class QWidget;
 
 /// USER_SECTION_END
 
-namespace Matlab
+namespace MatlabAPI
 {
 
 /// USER_SECTION_START 4
@@ -61,7 +61,7 @@ namespace Matlab
 		static constexpr Version version{ versionMajor, versionMinor, versionPatch };
 
 		// Library name
-		static constexpr const char* name				= "Matlab";
+		static constexpr const char* name				= "MatlabAPI";
 		static constexpr const char* author				= "Alex Krieg";
 		static constexpr const char* email				= "";
 		static constexpr const char* website			= "";

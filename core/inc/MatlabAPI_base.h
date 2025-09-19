@@ -4,9 +4,9 @@
 
 /// USER_SECTION_END
 
-#include "Matlab_global.h"
-#include "Matlab_debug.h"
-#include "Matlab_info.h"
+#include "MatlabAPI_global.h"
+#include "MatlabAPI_debug.h"
+#include "MatlabAPI_info.h"
 
 /// USER_SECTION_START 2
 

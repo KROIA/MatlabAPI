@@ -1,9 +1,9 @@
 #include "MatlabEngine.h"
-#include "Matlab_debug.h"
+#include "MatlabAPI_debug.h"
 #include "engine.h" // Matlab Engine API
 #include <QThread>
 
-namespace Matlab
+namespace MatlabAPI
 {
 	static Engine* s_engine = nullptr; // Matlab Engine instance
 	static MatlabEngine* s_instance = nullptr; // singleton instance

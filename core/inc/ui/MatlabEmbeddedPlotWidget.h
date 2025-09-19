@@ -1,5 +1,5 @@
 #pragma once
-#include "Matlab_base.h"
+#include "MatlabAPI_base.h"
 #include <QWidget>
 #include <QString>
 
@@ -17,7 +17,7 @@
 
 class QVBoxLayout;
 
-namespace Matlab
+namespace MatlabAPI
 {
     class MATLAB_API MatlabEmbeddedPlotWidget : public QWidget {
         Q_OBJECT

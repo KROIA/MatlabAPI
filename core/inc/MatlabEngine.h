@@ -1,12 +1,12 @@
 #pragma once
-#include "Matlab_base.h"
+#include "MatlabAPI_base.h"
 #include "MatlabArray.h"
 #include <unordered_map>
 
 struct engine; // Forward declaration of mxArray
 typedef struct engine Engine;
 
-namespace Matlab
+namespace MatlabAPI
 {
 	class MATLAB_API MatlabEngine
 	{

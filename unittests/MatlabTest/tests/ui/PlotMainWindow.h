@@ -1,5 +1,5 @@
 #pragma once
-#include "Matlab.h"
+#include "MatlabAPI.h"
 
 #include <QApplication>
 #include <QMainWindow>
@@ -9,7 +9,7 @@
 #include <vector>
 
 
-using namespace Matlab;
+using namespace MatlabAPI;
 class PlotMainWindow : public QMainWindow {
     Q_OBJECT
 

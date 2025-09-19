@@ -30,13 +30,13 @@ cmake_minimum_required(VERSION 3.20)
 include(cmake/utility.cmake)
 
 # Name of the library
-set(LIBRARY_NAME Matlab)                   # <AUTO_REPLACED>
+set(LIBRARY_NAME MatlabAPI)                   # <AUTO_REPLACED>
 
 # Define is only active if the library is built
-set(LIB_DEFINE MATLAB_LIB)                # <AUTO_REPLACED>
+set(LIB_DEFINE MATLAB_API_LIB)                # <AUTO_REPLACED>
 
 # macro to enable profiling
-set(LIB_PROFILE_DEFINE M_PROFILING)  # <LIB_PROFILE_DEFINE>  
+set(LIB_PROFILE_DEFINE MATLAB_API_PROFILING)  # <LIB_PROFILE_DEFINE>  
 
 
 # Enable/disable QT modules
@@ -192,7 +192,7 @@ include(cmake/ExampleMaster.cmake)
 ## USER_SECTION_END
 
 add_subdirectory(core)
-if(COMPILE_EXAMPLES AND NOT Matlab_NO_EXAMPLES)
+if(COMPILE_EXAMPLES AND NOT MatlabAPI_NO_EXAMPLES)
     message("Include examples for ${LIBRARY_NAME}")
     add_subdirectory(examples)
 endif()
@@ -201,7 +201,7 @@ endif()
 
 ## USER_SECTION_END
 
-if(COMPILE_UNITTESTS AND NOT Matlab_NO_UNITTESTS)
+if(COMPILE_UNITTESTS AND NOT MatlabAPI_NO_UNITTESTS)
     message("Include unittests for ${LIBRARY_NAME}")
     add_subdirectory(unitTests)
 endif()

@@ -8,7 +8,7 @@
 #include <algorithm>
 #include <iostream>
 
-namespace Matlab
+namespace MatlabAPI
 {
     MatlabArray::MatlabArray(const std::string& name)
         : array_(nullptr)

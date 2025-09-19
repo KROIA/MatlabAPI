@@ -1,5 +1,5 @@
 #include <iostream>
-#include "Matlab.h"
+#include "MatlabAPI.h"
 #include <iostream>
 #include <QApplication >
 #include "tests.h"
@@ -8,7 +8,7 @@
 int main(int argc, char* argv[])
 {
 	QApplication app(argc, argv);
-	Matlab::LibraryInfo::printInfo();
+	MatlabAPI::LibraryInfo::printInfo();
 	Log::UI::createConsoleView(Log::UI::nativeConsoleView);
 	Log::UI::getConsoleView<Log::UI::NativeConsoleView>()->show();
 
@@ -22,6 +22,6 @@ int main(int argc, char* argv[])
 	UnitTest::Test::runAllTests(results);
 	UnitTest::Test::printResults(results);
 
-	Matlab::MatlabEngine::destroy();
+	MatlabAPI::MatlabEngine::destroy();
 	return results.getSuccess();
 }
