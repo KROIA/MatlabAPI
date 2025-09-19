@@ -89,7 +89,7 @@ namespace Matlab
 /// USER_SECTION_START 4
 
 /// USER_SECTION_END
-	class MATLAB_EXPORT Profiler
+	class MATLAB_API Profiler
 	{
 	public:
 		/// USER_SECTION_START 5
@@ -112,7 +112,7 @@ namespace Matlab
 
 
 #if LOGGER_LIBRARY_AVAILABLE == 1
-	class MATLAB_EXPORT Logger 
+	class MATLAB_API Logger 
 	{
 		/// USER_SECTION_START 8
 
