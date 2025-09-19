@@ -2,7 +2,7 @@
 #include <QApplication>
 #endif
 #include <iostream>
-#include "Matlab.h"
+#include "MatlabAPI.h"
 
 #ifdef QT_WIDGETS_ENABLED
 #include <QWidget>
@@ -18,10 +18,10 @@ int main(int argc, char* argv[])
 #ifdef QT_ENABLED
 	QApplication app(argc, argv);
 #endif
-	Matlab::Profiler::start();
-	Matlab::LibraryInfo::printInfo();
+	MatlabAPI::Profiler::start();
+	MatlabAPI::LibraryInfo::printInfo();
 #ifdef QT_WIDGETS_ENABLED
-	QWidget* widget = Matlab::LibraryInfo::createInfoWidget();
+	QWidget* widget = MatlabAPI::LibraryInfo::createInfoWidget();
 	if (widget)
 		widget->show();
 #endif
@@ -29,6 +29,6 @@ int main(int argc, char* argv[])
 #ifdef QT_ENABLED
 	ret = app.exec();
 #endif
-	Matlab::Profiler::stop((std::string(Matlab::LibraryInfo::name) + ".prof").c_str());
+	MatlabAPI::Profiler::stop((std::string(MatlabAPI::LibraryInfo::name) + ".prof").c_str());
 	return ret;
 }
