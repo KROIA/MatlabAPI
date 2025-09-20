@@ -21,6 +21,7 @@ namespace MatlabAPI
 
 		void processTimeStep(const Matrix& u);
 
+		void setState(const Matrix& x);
 		const Matrix& getState() const { return x; }
 		const Matrix& getOutput() const { return y; }
 

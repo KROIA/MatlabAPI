@@ -120,6 +120,14 @@ namespace MatlabAPI
 		x = Ad * x + Bd * u;
 	}
 
+	void StateSpaceModel::setState(const Matrix& x)
+	{
+		if (x.getRows() == this->x.getRows() && x.getCols() == this->x.getCols())
+			this->x = x;
+		else
+			throw std::invalid_argument("State vector size mismatch.");
+	}
+
 
 	std::string StateSpaceModel::toString() const
 	{
