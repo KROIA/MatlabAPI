@@ -3,6 +3,13 @@
 
 namespace MatlabAPI
 {
+	Matrix::Matrix()
+		: m_rows(0)
+		, m_cols(0)
+		, m_data(nullptr)
+	{
+
+	}
 	Matrix::Matrix(size_t rows, size_t cols)
 		: m_rows(rows)
 		, m_cols(cols)

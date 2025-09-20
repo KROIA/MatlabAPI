@@ -11,6 +11,9 @@
 #include "MatlabArray.h"
 
 #include "math/Matrix.h"
+#include "math/StateSpaceModel.h"
+#include "math/TransferFunction.h"
+#include "math/MIMOSystem.h"
 
 
 #include "ui/MatlabEmbeddedPlotWidget.h"

@@ -32,6 +32,8 @@ namespace MatlabAPI
 		static std::vector<std::string> listVariables();
 
 
+		static double getDiscreteTimeStep();
+		static void setDiscreteTimeStep(double dt);
 	private:
 
 		static Engine* getEngine();
@@ -40,7 +42,7 @@ namespace MatlabAPI
 
 		static void err_matlabNotStarted();
 
-
+		double m_discreteTimeStep = 0.01;
 		std::unordered_map<std::string, MatlabArray*> m_variables; // map of variable name to MatlabArray
 	};
 }
