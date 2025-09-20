@@ -1,6 +1,7 @@
 #pragma once
 #include "MatlabAPI_base.h"
 #include "MatlabArray.h"
+#include "math/Matrix.h"
 #include <unordered_map>
 
 struct engine; // Forward declaration of mxArray
@@ -27,6 +28,7 @@ namespace MatlabAPI
 		static bool addVariable(MatlabArray* var);
 		static bool removeVariable(const std::string& name);
 		static MatlabArray* getVariable(const std::string& name);
+		static Matrix getMatrix(const std::string& name);
 		static std::vector<std::string> listVariables();
 
 

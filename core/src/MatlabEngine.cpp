@@ -190,6 +190,10 @@ namespace MatlabAPI
 		Logger::logDebug("Variable with name '" + name + "' exists, updated MatlabArray: " + it->second->toString());
 		return it->second;
 	}
+	Matrix MatlabEngine::getMatrix(const std::string& name)
+	{
+		return Matrix(getVariable(name));
+	}
 
 	std::vector<std::string> MatlabEngine::listVariables()
 	{

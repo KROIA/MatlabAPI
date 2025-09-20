@@ -10,6 +10,8 @@
 #include "MatlabEngine.h"
 #include "MatlabArray.h"
 
+#include "math/Matrix.h"
+
 
 #include "ui/MatlabEmbeddedPlotWidget.h"
 /// USER_SECTION_END
