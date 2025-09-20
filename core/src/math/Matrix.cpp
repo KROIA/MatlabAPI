@@ -69,6 +69,16 @@ namespace MatlabAPI
 		delete[] m_data;
 	}
 
+	Matrix Matrix::identity(size_t size)
+	{
+		Matrix id(size, size);
+		for (size_t i = 0; i < size; i++)
+		{
+			id(i, i) = 1.0;
+		}
+		return id;
+	}
+
 	bool Matrix::operator==(const Matrix& other) const
 	{
 		if (m_rows != other.m_rows || m_cols != other.m_cols)
@@ -272,6 +282,7 @@ namespace MatlabAPI
 				std::swap((*this)(r, c), (*this)(c, r));
 			}
 		}
+		std::swap(m_rows, m_cols);
 		return *this;
 	}
 	Matrix Matrix::getTransposed() const

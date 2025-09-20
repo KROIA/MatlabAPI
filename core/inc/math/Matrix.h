@@ -22,6 +22,8 @@ namespace MatlabAPI
 
 		~Matrix();
 
+		static Matrix identity(size_t size);
+
 		bool operator==(const Matrix& other) const;
 
 		double& operator()(size_t row, size_t col) { return m_data[row * m_cols + col]; }
