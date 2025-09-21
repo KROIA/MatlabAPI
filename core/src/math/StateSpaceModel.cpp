@@ -69,55 +69,11 @@ namespace MatlabAPI
 
 	}
 
-	/*StateSpaceModel StateSpaceModel::createFromTransferFunction(const TransferFunction& tf)
-	{
-		Matrix x0(0,0);
-		return createFromTransferFunction(tf, x0);
-	}
-	StateSpaceModel StateSpaceModel::createFromTransferFunction(const TransferFunction &tf, const Matrix& x0)
-	{
-		if (!MatlabEngine::isInstantiated())
-		{
-			throw std::runtime_error("Matlab engine is not instantiated.");
-		}
-
-		const std::vector<double>& num = tf.getNumerator();
-		Matrix numMat(1, num.size());
-		for (size_t i = 0; i < num.size(); i++)
-		{
-			numMat(0, i) = num[i];
-		}
-
-		const std::vector<double>& den = tf.getDenominator();
-		Matrix denMat(1, den.size());
-		for (size_t i = 0; i < den.size(); i++)
-		{
-			denMat(0, i) = den[i];
-		}
-
-		double dt = MatlabEngine::getDiscreteTimeStep();
-		MatlabEngine::addVariable(numMat.toMatlabArray("num"));
-		MatlabEngine::addVariable(denMat.toMatlabArray("den"));
-		MatlabEngine::eval(("sys = tf(num, den); sysd = c2d(sys, "+std::to_string(dt)+", 'zoh'); [Ad,Bd,Cd,Dd] = ssdata(ss(sysd)); [A,B,C,D] = ssdata(ss(sys));").c_str());
-		Matrix Ad = MatlabEngine::getMatrix("Ad");
-		Matrix Bd = MatlabEngine::getMatrix("Bd");
-		Matrix Cd = MatlabEngine::getMatrix("Cd");
-		Matrix Dd = MatlabEngine::getMatrix("Dd");
-
-		Matrix A = MatlabEngine::getMatrix("A");
-		Matrix B = MatlabEngine::getMatrix("B");
-		Matrix C = MatlabEngine::getMatrix("C");
-		Matrix D = MatlabEngine::getMatrix("D");
-
-		return StateSpaceModel(A, B, C, D, x0);
-
-	}*/
-
 
 	void StateSpaceModel::processTimeStep(const Matrix& u)
 	{
-		y = Cd * x + Dd * u;
 		x = Ad * x + Bd * u;
+		y = Cd * x + Dd * u;
 	}
 
 	void StateSpaceModel::setState(const Matrix& x)

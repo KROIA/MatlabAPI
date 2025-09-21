@@ -16,19 +16,17 @@ namespace MatlabAPI
 		StateSpaceModel(const StateSpaceModel& other);
 		~StateSpaceModel();
 
-		//static StateSpaceModel createFromTransferFunction(const TransferFunction &tf);
-		//static StateSpaceModel createFromTransferFunction(const TransferFunction &tf, const Matrix& x0);
-
+		
 		void processTimeStep(const Matrix& u);
 
 		void setState(const Matrix& x);
 		const Matrix& getState() const { return x; }
 		const Matrix& getOutput() const { return y; }
 
-		const Matrix& getA() const { return A; }
-		const Matrix& getB() const { return B; }
-		const Matrix& getC() const { return C; }
-		const Matrix& getD() const { return D; }
+		const Matrix& getA() const  { return A; }
+		const Matrix& getB() const  { return B; }
+		const Matrix& getC() const  { return C; }
+		const Matrix& getD() const  { return D; }
 
 		const Matrix& getAd() const { return Ad; }
 		const Matrix& getBd() const { return Bd; }
