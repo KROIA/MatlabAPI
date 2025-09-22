@@ -1,7 +1,7 @@
 #include <iostream>
 #include "MatlabAPI.h"
 #include <iostream>
-#include <QApplication >
+#include <QApplication>
 #include "tests.h"
 
 
@@ -12,9 +12,15 @@ int main(int argc, char* argv[])
 	Log::UI::createConsoleView(Log::UI::nativeConsoleView);
 	Log::UI::getConsoleView<Log::UI::NativeConsoleView>()->show();
 
-	if (!MatlabEngine::instantiate())
+	//std::vector<std::u16string> names = matlab::engine::findMATLAB();
+	//auto matlabPtr = matlab::engine::connectMATLAB(u"MySession");
+
+	if (!MatlabEngine::instantiate(u"MySession"))
 	{
-		Logger::logError("Could not start MATLAB engine");
+		if (!MatlabEngine::instantiate())
+		{
+			Logger::logError("Could not start MATLAB engine");
+		}
 	}
 
 	std::cout << "Running "<< UnitTest::Test::getTests().size() << " tests...\n";

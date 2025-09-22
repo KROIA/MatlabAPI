@@ -5,6 +5,10 @@
 #include <QThread>
 #include <QWindow>
 
+#ifdef MATLAB_API_USE_CPP_API
+#include "MatlabDataArray.hpp"
+#endif
+
 namespace MatlabAPI
 {
     MatlabEmbeddedPlotWidget::MatlabEmbeddedPlotWidget(const QString& figureName, QWidget* parent)
@@ -34,8 +38,11 @@ namespace MatlabAPI
         // Get figure handle
         MatlabArray* figHandle = MatlabEngine::getVariable("fig");
         if (!figHandle) return false;
-
-        m_figureHandle = (int)*figHandle->getPr();
+#ifdef MATLAB_API_USE_CPP_API
+        m_figureHandle = (int)MatlabEngine::getProperty(figHandle, u"Number").getScalar();
+#else
+		m_figureHandle = static_cast<int>(*(figHandle->getPr()));
+#endif
 		MatlabEngine::removeVariable("fig");
    
 
@@ -214,7 +221,13 @@ namespace MatlabAPI
         }
         else
         {
+#ifdef MATLAB_API_USE_CPP_API
+            matlab::data::TypedArray<double> typedHwndArray = hwndArray->getAPIArray();
+            double hwndValue = typedHwndArray[0];
+#else
             double hwndValue = *hwndArray->getPr();
+#endif
+            
             MatlabEngine::removeVariable(hwndArray->getName());
 
             HWND windowHandle = reinterpret_cast<HWND>(static_cast<uintptr_t>(hwndValue));
@@ -248,7 +261,12 @@ namespace MatlabAPI
         }
         else
         {
+#ifdef MATLAB_API_USE_CPP_API
+            matlab::data::TypedArray<double> typedHwndArray = hwndArray->getAPIArray();
+            double hwndValue = typedHwndArray[0];
+#else
             double hwndValue = *hwndArray->getPr();
+#endif
             MatlabEngine::removeVariable(hwndArray->getName());
 
             HWND windowHandle = reinterpret_cast<HWND>(static_cast<uintptr_t>(hwndValue));

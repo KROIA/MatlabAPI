@@ -4,6 +4,8 @@
 #include <iostream>
 #include "MatlabAPI.h"
 
+
+
 #ifdef QT_WIDGETS_ENABLED
 #include <QWidget>
 #endif
@@ -18,6 +20,7 @@ int main(int argc, char* argv[])
 #ifdef QT_ENABLED
 	QApplication app(argc, argv);
 #endif
+	
 	MatlabAPI::Profiler::start();
 	MatlabAPI::LibraryInfo::printInfo();
 #ifdef QT_WIDGETS_ENABLED

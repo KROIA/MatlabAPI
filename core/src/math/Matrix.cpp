@@ -1,6 +1,10 @@
 #include "math/Matrix.h"
 #include <memory>
 
+#ifdef MATLAB_API_USE_CPP_API
+#include "MatlabDataArray.hpp"
+#endif
+
 namespace MatlabAPI
 {
 	Matrix::Matrix()
@@ -27,6 +31,17 @@ namespace MatlabAPI
 		m_cols = array->getN();
 		m_data = new double[m_rows * m_cols];
 		// Matlab uses column-major order, so we need to transpose while copying
+#ifdef MATLAB_API_USE_CPP_API
+		const auto& arrayData = array->getAPIArray();
+		matlab::data::TypedArray<double> d = arrayData;
+		for (size_t r = 0; r < m_rows; r++)
+		{
+			for (size_t c = 0; c < m_cols; c++)
+			{
+				m_data[r * m_cols + c] = d[r][c];
+			}
+		}
+#else
 		const double* arrayData = array->getPr();
 		for (size_t r = 0; r < m_rows; r++)
 		{
@@ -35,6 +50,7 @@ namespace MatlabAPI
 				m_data[r * m_cols + c] = arrayData[c * m_rows + r];
 			}
 		}
+#endif
 	}
 	Matrix::Matrix(const std::vector<std::vector<double>>& mat)
 	{

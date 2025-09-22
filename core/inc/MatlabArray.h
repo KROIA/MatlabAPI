@@ -3,8 +3,17 @@
 #include <vector>
 #include <string>
 
+#ifdef MATLAB_API_USE_CPP_API
+namespace matlab {
+    namespace data
+    {
+        class Array;
+    }
+}
+#else
 struct mxArray_tag; // Forward declaration of mxArray
 typedef struct mxArray_tag mxArray;
+#endif
 
 namespace MatlabAPI
 {
@@ -27,7 +36,11 @@ namespace MatlabAPI
         /**
          * @brief Constructor from existing mxArray (takes ownership)
          */
+#ifdef MATLAB_API_USE_CPP_API
+        explicit MatlabArray(const std::string& name, const matlab::data::Array& arr);
+#else
         explicit MatlabArray(const std::string& name, mxArray* arr, bool take_ownership = true);
+#endif
 
         /**
          * @brief Create double scalar
@@ -81,11 +94,19 @@ namespace MatlabAPI
         static MatlabArray createCell(const std::string& name, size_t rows, size_t cols);
 
         // ===== Access to underlying mxArray =====
+#ifdef MATLAB_API_USE_CPP_API
+		matlab::data::Array* get() const { return array_; }
+		matlab::data::Array* release();
 
+        void overwrite(const matlab::data::Array& arr);
+#else
         mxArray* get() const { return array_; }
         mxArray* release();
 
-		void overwrite(mxArray* arr, bool take_ownership = true, bool deleteOld = true);
+        void overwrite(mxArray* arr, bool take_ownership = true, bool deleteOld = true);
+#endif
+
+		
 
 		const std::string& getName() const { return m_name; }
 		void setName(const std::string& name) { m_name = name; }
@@ -128,6 +149,28 @@ namespace MatlabAPI
         // ===== Data Access =====
 
         template<typename T>
+		std::vector<T> getRowData(size_t row) const;
+
+		template<typename T>
+		std::vector<T> getColData(size_t col) const;
+
+#ifdef MATLAB_API_USE_CPP_API
+        //template<typename T>
+        //T* getData() {
+        //    return static_cast<T*>(getDataRaw());
+        //}
+        //
+        //template<typename T>
+        //const T* getData() const {
+        //    return static_cast<const T*>(getDataRawC());
+        //}
+
+        //void* getDataRaw();
+        //void* getDataRawC() const;
+
+        //double* getPr() const;
+#else
+        template<typename T>
         T* getData() {
             return static_cast<T*>(getDataRaw());
         }
@@ -141,6 +184,7 @@ namespace MatlabAPI
         void* getDataRawC() const;
 
         double* getPr() const;
+#endif
 
         // ===== Convenience Methods for Common Types =====
 
@@ -179,9 +223,15 @@ namespace MatlabAPI
 
         std::vector<std::string> getFieldNames() const;
 
+#ifdef MATLAB_API_USE_CPP_API
+        //MatlabArray getField(const std::string& fieldname, size_t index = 0) const;
+        //
+        //void setField(const std::string& fieldname, const MatlabArray& value, size_t index = 0);
+#else
         MatlabArray getField(const std::string& fieldname, size_t index = 0) const;
-
+        
         void setField(const std::string& fieldname, const MatlabArray& value, size_t index = 0);
+#endif
 
         // ===== Utility Methods =====
 
@@ -207,10 +257,20 @@ namespace MatlabAPI
         // Stream operator
         friend std::ostream& operator<<(std::ostream& os, const MatlabArray& arr);
 
+#ifdef MATLAB_API_USE_CPP_API
+        const matlab::data::Array& getAPIArray() const;
+#else
+        const mxArray* getAPIArray() const;
+#endif
 
         private:
+#ifdef MATLAB_API_USE_CPP_API
+			matlab::data::Array* array_;
+#else
             mxArray* array_;
             bool owns_memory_;
+#endif
+            
 			std::string m_name;
 
 			MatlabEngine* m_owner = nullptr;

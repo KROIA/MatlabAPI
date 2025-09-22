@@ -9,5 +9,5 @@
 #include "MatlabAPI_info.h"
 
 /// USER_SECTION_START 2
-
+#define MATLAB_API_USE_CPP_API
 /// USER_SECTION_END
