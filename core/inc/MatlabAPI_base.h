@@ -10,4 +10,9 @@
 
 /// USER_SECTION_START 2
 #define MATLAB_API_USE_CPP_API
+
+#ifdef MATLAB_API_USE_CPP_API
+#include "MatlabDataArray.hpp"
+#include "MatlabEngine.hpp"
+#endif
 /// USER_SECTION_END
