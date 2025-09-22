@@ -273,7 +273,7 @@ namespace MatlabAPI
     std::string MatlabArray::getClassName() const
     {
         if (!array_)
-            return false;
+            return "none";
         matlab::data::ArrayType type = array_->getType();
         switch (type)
         {
