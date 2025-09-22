@@ -17,7 +17,7 @@ namespace MatlabAPI
 	public:
 		static bool instantiate();
 		static bool instantiate(const char* startcmd, int retryCount = 10);
-		static bool destroy();
+		static bool terminate();
 		static bool isInstantiated();
 
 		static MatlabEngine* getInstance();

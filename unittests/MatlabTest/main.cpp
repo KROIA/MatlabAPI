@@ -22,6 +22,6 @@ int main(int argc, char* argv[])
 	UnitTest::Test::runAllTests(results);
 	UnitTest::Test::printResults(results);
 
-	MatlabAPI::MatlabEngine::destroy();
+	MatlabAPI::MatlabEngine::terminate();
 	return results.getSuccess();
 }

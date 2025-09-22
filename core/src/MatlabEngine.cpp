@@ -59,7 +59,7 @@ namespace MatlabAPI
 		} while (s_engine == nullptr && --retryCount > 0);
 		return true;
 	}
-	bool MatlabEngine::destroy()
+	bool MatlabEngine::terminate()
 	{
 		if (s_instance == nullptr)
 			return true; // already destroyed
