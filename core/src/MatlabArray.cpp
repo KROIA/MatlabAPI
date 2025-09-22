@@ -15,13 +15,16 @@
 namespace MatlabAPI
 {
 #ifdef MATLAB_API_USE_CPP_API
-	static matlab::data::ArrayFactory s_factory; // Factory for creating MATLAB data arrays
+    static matlab::data::ArrayFactory* s_factory = nullptr; // Factory for creating MATLAB data arrays
 
 
     MatlabArray::MatlabArray(const std::string& name)
         : array_(nullptr)
-		, m_name(name)
-    {}
+        , m_name(name)
+    {
+        if (!s_factory)
+            s_factory = new matlab::data::ArrayFactory();
+    }
 
     /**
      * @brief Constructor from existing mxArray (takes ownership)
@@ -29,16 +32,21 @@ namespace MatlabAPI
     MatlabArray::MatlabArray(const std::string& name, const matlab::data::Array& arr)
         : array_(new matlab::data::Array(arr))
         , m_name(name)
-    {}
+    {
+        if (!s_factory)
+            s_factory = new matlab::data::ArrayFactory();
+    }
 
     /**
      * @brief Create double scalar
      */
     MatlabArray::MatlabArray(const std::string& name, double value)
         : array_(nullptr)
-		, m_name(name)
+        , m_name(name)
     {
-		array_ = new matlab::data::Array(s_factory.createScalar(value));
+        if (!s_factory)
+            s_factory = new matlab::data::ArrayFactory();
+        array_ = new matlab::data::Array(s_factory->createScalar(value));
     }
 
     /**
@@ -46,9 +54,11 @@ namespace MatlabAPI
      */
     MatlabArray::MatlabArray(const std::string& name, const std::vector<double>& data)
         : array_(nullptr)
-		, m_name(name)
+        , m_name(name)
     {
-		array_ = new matlab::data::Array(s_factory.createArray({ data.size(), 1 }, data.begin(), data.end()));
+        if (!s_factory)
+            s_factory = new matlab::data::ArrayFactory();
+        array_ = new matlab::data::Array(s_factory->createArray({ data.size(), 1 }, data.begin(), data.end()));
     }
 
     /**
@@ -57,10 +67,12 @@ namespace MatlabAPI
     MatlabArray::MatlabArray(const std::string& name, size_t rows, size_t cols, const std::vector<double>& data)
         : m_name(name)
     {
+        if (!s_factory)
+            s_factory = new matlab::data::ArrayFactory();
         if (data.size() != rows * cols) {
             throw std::invalid_argument("Data size doesn't match matrix dimensions");
         }
-		array_ = new matlab::data::Array(s_factory.createArray({ rows, cols }, data.begin(), data.end()));
+        array_ = new matlab::data::Array(s_factory->createArray({ rows, cols }, data.begin(), data.end()));
     }
 
     /**
@@ -69,7 +81,9 @@ namespace MatlabAPI
     MatlabArray::MatlabArray(const std::string& name, const std::string& str)
         : m_name(name)
     {
-		array_ = new matlab::data::Array(s_factory.createCharArray(str));
+        if (!s_factory)
+            s_factory = new matlab::data::ArrayFactory();
+        array_ = new matlab::data::Array(s_factory->createCharArray(str));
     }
 
     /**
@@ -78,7 +92,9 @@ namespace MatlabAPI
     MatlabArray::MatlabArray(const std::string& name, const std::vector<bool>& data)
         : m_name(name)
     {
-		array_ = new matlab::data::Array(s_factory.createArray({ data.size(), 1 }, data.begin(), data.end()));
+        if (!s_factory)
+            s_factory = new matlab::data::ArrayFactory();
+        array_ = new matlab::data::Array(s_factory->createArray({ data.size(), 1 }, data.begin(), data.end()));
     }
 
     // Copy constructor
@@ -86,7 +102,7 @@ namespace MatlabAPI
         : m_name(other.m_name)
     {
         if (other.array_) {
-			array_ = new matlab::data::Array(*(other.array_));
+            array_ = new matlab::data::Array(*(other.array_));
         }
         else {
             array_ = nullptr;
@@ -96,7 +112,7 @@ namespace MatlabAPI
     // Move constructor
     MatlabArray::MatlabArray(MatlabArray&& other) noexcept
         : array_(other.array_)
-		, m_name(std::move(other.m_name))
+        , m_name(std::move(other.m_name))
     {
         other.array_ = nullptr;
     }
@@ -107,24 +123,24 @@ namespace MatlabAPI
         if (this != &other) {
             delete array_;
             if (other.array_) {
-				array_ = new matlab::data::Array(*(other.array_));
+                array_ = new matlab::data::Array(*(other.array_));
             }
             else {
                 array_ = nullptr;
             }
-			m_name = other.m_name;
+            m_name = other.m_name;
         }
         return *this;
     }
 
     // Move assignment
-    MatlabArray& MatlabArray::operator=(MatlabArray&& other) noexcept 
+    MatlabArray& MatlabArray::operator=(MatlabArray&& other) noexcept
     {
         if (this != &other) {
-			delete array_;
+            delete array_;
             array_ = other.array_;
             other.array_ = nullptr;
-			m_name = std::move(other.m_name);
+            m_name = std::move(other.m_name);
         }
         return *this;
     }
@@ -132,32 +148,40 @@ namespace MatlabAPI
     // Destructor
     MatlabArray::~MatlabArray()
     {
-		delete array_;
+        delete array_;
     }
 
     // ===== Static Factory Methods =====
 
     MatlabArray MatlabArray::createDouble(const std::string& name, size_t rows, size_t cols)
     {
-		auto array = s_factory.createArray<double>({ rows, cols });
+        if (!s_factory)
+            s_factory = new matlab::data::ArrayFactory();
+        auto array = s_factory->createArray<double>({ rows, cols });
         return MatlabArray(name, array);
     }
 
     MatlabArray MatlabArray::createComplex(const std::string& name, size_t rows, size_t cols)
     {
-		auto array = s_factory.createArray<std::complex<double>>({ rows, cols });
+        if (!s_factory)
+            s_factory = new matlab::data::ArrayFactory();
+        auto array = s_factory->createArray<std::complex<double>>({ rows, cols });
         return MatlabArray(name, array);
     }
 
     MatlabArray MatlabArray::createLogical(const std::string& name, size_t rows, size_t cols)
     {
-		auto array = s_factory.createArray<bool>({ rows, cols });
+        if (!s_factory)
+            s_factory = new matlab::data::ArrayFactory();
+        auto array = s_factory->createArray<bool>({ rows, cols });
         return MatlabArray(name, array);
     }
 
     MatlabArray MatlabArray::createCell(const std::string& name, size_t rows, size_t cols)
     {
-		auto array = s_factory.createCellArray({ rows, cols });
+        if (!s_factory)
+            s_factory = new matlab::data::ArrayFactory();
+        auto array = s_factory->createCellArray({ rows, cols });
         return MatlabArray(name, array);
     }
 
@@ -170,46 +194,46 @@ namespace MatlabAPI
 
     void MatlabArray::overwrite(const matlab::data::Array& arr)
     {
-		delete array_;
-		array_ = new matlab::data::Array(arr);
+        delete array_;
+        array_ = new matlab::data::Array(arr);
     }
 
     // ===== Type Checking =====
 
-    bool MatlabArray::isDouble() const { return array_      && array_->getType() == matlab::data::ArrayType::DOUBLE; }
-    bool MatlabArray::isSingle() const { return array_      && array_->getType() == matlab::data::ArrayType::SINGLE; }
-    bool MatlabArray::isInt8() const { return array_        && array_->getType() == matlab::data::ArrayType::INT8; }
-    bool MatlabArray::isInt16() const { return array_       && array_->getType() == matlab::data::ArrayType::INT16; }
-    bool MatlabArray::isInt32() const { return array_       && array_->getType() == matlab::data::ArrayType::INT32; }
-    bool MatlabArray::isInt64() const { return array_       && array_->getType() == matlab::data::ArrayType::INT64; }
-    bool MatlabArray::isUint8() const { return array_       && array_->getType() == matlab::data::ArrayType::UINT8; }
-    bool MatlabArray::isUint16() const { return array_      && array_->getType() == matlab::data::ArrayType::UINT16; }
-    bool MatlabArray::isUint32() const { return array_      && array_->getType() == matlab::data::ArrayType::UINT32; }
-    bool MatlabArray::isUint64() const { return array_      && array_->getType() == matlab::data::ArrayType::UINT64; }
-    bool MatlabArray::isLogical() const { return array_     && array_->getType() == matlab::data::ArrayType::LOGICAL; }
-    bool MatlabArray::isChar() const { return array_        && array_->getType() == matlab::data::ArrayType::CHAR; }
-    bool MatlabArray::isStruct() const { return array_      && array_->getType() == matlab::data::ArrayType::STRUCT; }
-    bool MatlabArray::isCell() const { return array_        && array_->getType() == matlab::data::ArrayType::CELL; }
-    bool MatlabArray::isFunction() const { return array_    && array_->getType() == matlab::data::ArrayType::HANDLE_OBJECT_REF; }
-    bool MatlabArray::isComplex() const { 
+    bool MatlabArray::isDouble() const { return array_ && array_->getType() == matlab::data::ArrayType::DOUBLE; }
+    bool MatlabArray::isSingle() const { return array_ && array_->getType() == matlab::data::ArrayType::SINGLE; }
+    bool MatlabArray::isInt8() const { return array_ && array_->getType() == matlab::data::ArrayType::INT8; }
+    bool MatlabArray::isInt16() const { return array_ && array_->getType() == matlab::data::ArrayType::INT16; }
+    bool MatlabArray::isInt32() const { return array_ && array_->getType() == matlab::data::ArrayType::INT32; }
+    bool MatlabArray::isInt64() const { return array_ && array_->getType() == matlab::data::ArrayType::INT64; }
+    bool MatlabArray::isUint8() const { return array_ && array_->getType() == matlab::data::ArrayType::UINT8; }
+    bool MatlabArray::isUint16() const { return array_ && array_->getType() == matlab::data::ArrayType::UINT16; }
+    bool MatlabArray::isUint32() const { return array_ && array_->getType() == matlab::data::ArrayType::UINT32; }
+    bool MatlabArray::isUint64() const { return array_ && array_->getType() == matlab::data::ArrayType::UINT64; }
+    bool MatlabArray::isLogical() const { return array_ && array_->getType() == matlab::data::ArrayType::LOGICAL; }
+    bool MatlabArray::isChar() const { return array_ && array_->getType() == matlab::data::ArrayType::CHAR; }
+    bool MatlabArray::isStruct() const { return array_ && array_->getType() == matlab::data::ArrayType::STRUCT; }
+    bool MatlabArray::isCell() const { return array_ && array_->getType() == matlab::data::ArrayType::CELL; }
+    bool MatlabArray::isFunction() const { return array_ && array_->getType() == matlab::data::ArrayType::HANDLE_OBJECT_REF; }
+    bool MatlabArray::isComplex() const {
         if (!array_)
             return false;
-		matlab::data::ArrayType type = array_->getType();
+        matlab::data::ArrayType type = array_->getType();
         switch (type)
         {
-            case matlab::data::ArrayType::COMPLEX_DOUBLE:
-            case matlab::data::ArrayType::COMPLEX_SINGLE:
-            case matlab::data::ArrayType::COMPLEX_INT8:
-            case matlab::data::ArrayType::COMPLEX_UINT8:
-            case matlab::data::ArrayType::COMPLEX_INT16:
-            case matlab::data::ArrayType::COMPLEX_UINT16:
-            case matlab::data::ArrayType::COMPLEX_INT32:
-            case matlab::data::ArrayType::COMPLEX_UINT32:
-            case matlab::data::ArrayType::COMPLEX_INT64:
-			case matlab::data::ArrayType::COMPLEX_UINT64:
-				return true;
+        case matlab::data::ArrayType::COMPLEX_DOUBLE:
+        case matlab::data::ArrayType::COMPLEX_SINGLE:
+        case matlab::data::ArrayType::COMPLEX_INT8:
+        case matlab::data::ArrayType::COMPLEX_UINT8:
+        case matlab::data::ArrayType::COMPLEX_INT16:
+        case matlab::data::ArrayType::COMPLEX_UINT16:
+        case matlab::data::ArrayType::COMPLEX_INT32:
+        case matlab::data::ArrayType::COMPLEX_UINT32:
+        case matlab::data::ArrayType::COMPLEX_INT64:
+        case matlab::data::ArrayType::COMPLEX_UINT64:
+            return true;
         }
-        return false; 
+        return false;
     }
     bool MatlabArray::isSparse() const {
         if (!array_)
@@ -246,68 +270,68 @@ namespace MatlabAPI
     bool MatlabArray::isEmpty() const { return array_ && array_->isEmpty(); }
     bool MatlabArray::isValid() const { return array_ != nullptr; }
 
-    std::string MatlabArray::getClassName() const 
+    std::string MatlabArray::getClassName() const
     {
         if (!array_)
             return false;
         matlab::data::ArrayType type = array_->getType();
         switch (type)
         {
-		    case matlab::data::ArrayType::LOGICAL: return "logical";
-		    case matlab::data::ArrayType::CHAR: return "char";
-		    case matlab::data::ArrayType::MATLAB_STRING: return "string";
-		    case matlab::data::ArrayType::DOUBLE: return "double";
-		    case matlab::data::ArrayType::SINGLE: return "single";
-		    case matlab::data::ArrayType::INT8: return "int8";
-		    case matlab::data::ArrayType::UINT8: return "uint8";
-		    case matlab::data::ArrayType::INT16: return "int16";
-		    case matlab::data::ArrayType::UINT16: return "uint16";
-		    case matlab::data::ArrayType::INT32: return "int32";
-		    case matlab::data::ArrayType::UINT32: return "uint32";
-		    case matlab::data::ArrayType::INT64: return "int64";
-		    case matlab::data::ArrayType::UINT64: return "uint64";
-		    case matlab::data::ArrayType::COMPLEX_DOUBLE: return "complex double";
-		    case matlab::data::ArrayType::COMPLEX_SINGLE: return "complex single";
-		    case matlab::data::ArrayType::COMPLEX_INT8: return "complex int8";
-			case matlab::data::ArrayType::COMPLEX_UINT8: return "complex uint8";
-			case matlab::data::ArrayType::COMPLEX_INT16: return "complex int16";
-			case matlab::data::ArrayType::COMPLEX_UINT16: return "complex uint16";
-			case matlab::data::ArrayType::COMPLEX_INT32: return "complex int32";
-			case matlab::data::ArrayType::COMPLEX_UINT32: return "complex uint32";
-			case matlab::data::ArrayType::COMPLEX_INT64: return "complex int64";
-			case matlab::data::ArrayType::COMPLEX_UINT64: return "complex uint64";
-			case matlab::data::ArrayType::CELL: return "cell";
-			case matlab::data::ArrayType::STRUCT: return "struct";
-			case matlab::data::ArrayType::OBJECT: return "object";
-			case matlab::data::ArrayType::VALUE_OBJECT: return "value object";
-			case matlab::data::ArrayType::HANDLE_OBJECT_REF: return "handle object";
-			case matlab::data::ArrayType::ENUM: return "enum";
-			case matlab::data::ArrayType::SPARSE_LOGICAL: return "sparse logical";
-			case matlab::data::ArrayType::SPARSE_DOUBLE: return "sparse double";
-			case matlab::data::ArrayType::SPARSE_COMPLEX_DOUBLE: return "sparse complex double";
-			case matlab::data::ArrayType::UNKNOWN: return "unknown";
+        case matlab::data::ArrayType::LOGICAL: return "logical";
+        case matlab::data::ArrayType::CHAR: return "char";
+        case matlab::data::ArrayType::MATLAB_STRING: return "string";
+        case matlab::data::ArrayType::DOUBLE: return "double";
+        case matlab::data::ArrayType::SINGLE: return "single";
+        case matlab::data::ArrayType::INT8: return "int8";
+        case matlab::data::ArrayType::UINT8: return "uint8";
+        case matlab::data::ArrayType::INT16: return "int16";
+        case matlab::data::ArrayType::UINT16: return "uint16";
+        case matlab::data::ArrayType::INT32: return "int32";
+        case matlab::data::ArrayType::UINT32: return "uint32";
+        case matlab::data::ArrayType::INT64: return "int64";
+        case matlab::data::ArrayType::UINT64: return "uint64";
+        case matlab::data::ArrayType::COMPLEX_DOUBLE: return "complex double";
+        case matlab::data::ArrayType::COMPLEX_SINGLE: return "complex single";
+        case matlab::data::ArrayType::COMPLEX_INT8: return "complex int8";
+        case matlab::data::ArrayType::COMPLEX_UINT8: return "complex uint8";
+        case matlab::data::ArrayType::COMPLEX_INT16: return "complex int16";
+        case matlab::data::ArrayType::COMPLEX_UINT16: return "complex uint16";
+        case matlab::data::ArrayType::COMPLEX_INT32: return "complex int32";
+        case matlab::data::ArrayType::COMPLEX_UINT32: return "complex uint32";
+        case matlab::data::ArrayType::COMPLEX_INT64: return "complex int64";
+        case matlab::data::ArrayType::COMPLEX_UINT64: return "complex uint64";
+        case matlab::data::ArrayType::CELL: return "cell";
+        case matlab::data::ArrayType::STRUCT: return "struct";
+        case matlab::data::ArrayType::OBJECT: return "object";
+        case matlab::data::ArrayType::VALUE_OBJECT: return "value object";
+        case matlab::data::ArrayType::HANDLE_OBJECT_REF: return "handle object";
+        case matlab::data::ArrayType::ENUM: return "enum";
+        case matlab::data::ArrayType::SPARSE_LOGICAL: return "sparse logical";
+        case matlab::data::ArrayType::SPARSE_DOUBLE: return "sparse double";
+        case matlab::data::ArrayType::SPARSE_COMPLEX_DOUBLE: return "sparse complex double";
+        case matlab::data::ArrayType::UNKNOWN: return "unknown";
         }
-		return "unknown";
+        return "unknown";
     }
 
     // ===== Dimension Information =====
 
-    size_t MatlabArray::getNumberOfDimensions() const 
-    {
-		matlab::data::ArrayDimensions dims = array_ ? array_->getDimensions() : matlab::data::ArrayDimensions();
-		return dims.size();
-    }
-
-    std::vector<size_t> MatlabArray::getDimensions() const 
+    size_t MatlabArray::getNumberOfDimensions() const
     {
         matlab::data::ArrayDimensions dims = array_ ? array_->getDimensions() : matlab::data::ArrayDimensions();
-		std::vector<size_t> ndims = dims.size() > 0 ? std::vector<size_t>(dims.begin(), dims.end()) : std::vector<size_t>{ 0 };
+        return dims.size();
+    }
+
+    std::vector<size_t> MatlabArray::getDimensions() const
+    {
+        matlab::data::ArrayDimensions dims = array_ ? array_->getDimensions() : matlab::data::ArrayDimensions();
+        std::vector<size_t> ndims = dims.size() > 0 ? std::vector<size_t>(dims.begin(), dims.end()) : std::vector<size_t>{ 0 };
         return ndims;
     }
 
     size_t MatlabArray::getM() const { return array_ ? array_->getDimensions()[0] : 0; }  // rows
     size_t MatlabArray::getN() const { return array_ ? array_->getDimensions()[1] : 0; }  // cols
-    size_t MatlabArray::getNumberOfElements() const 
+    size_t MatlabArray::getNumberOfElements() const
     {
         return array_ ? array_->getNumberOfElements() : 0;
     }
@@ -324,99 +348,99 @@ namespace MatlabAPI
     //    return array_ ? static_cast<const T*>(mxGetData(array_)) : nullptr;
     //}
 
-	template<>
+    template<>
     std::vector<double> MatlabArray::getRowData<double>(size_t row) const
     {
-		std::vector<double> result;
-		if (!array_ || !isDouble())
-			return result;
-		
-		size_t rows = getM();
-		size_t cols = getN();
-		if (row >= rows)
-			throw std::out_of_range("Row index out of range");
+        std::vector<double> result;
+        if (!array_ || !isDouble())
+            return result;
+
+        size_t rows = getM();
+        size_t cols = getN();
+        if (row >= rows)
+            throw std::out_of_range("Row index out of range");
         result.reserve(cols);
-		for (size_t col = 0; col < cols; col++)
-			result.push_back(array_[row][col]);
-		return result;
+        for (size_t col = 0; col < cols; col++)
+            result.push_back(array_[row][col]);
+        return result;
     }
 
-	template<>
-	std::vector<double> MatlabArray::getColData<double>(size_t col) const
-	{
-		std::vector<double> result;
-		if (!array_ || !isDouble())
-			return result;
-		size_t rows = getM();
-		size_t cols = getN();
-		if (col >= cols)
-			throw std::out_of_range("Column index out of range");
-		result.reserve(rows);
-		for (size_t row = 0; row < rows; row++)
-			result.push_back(array_[row][col]);
-		return result;
-	}
+    template<>
+    std::vector<double> MatlabArray::getColData<double>(size_t col) const
+    {
+        std::vector<double> result;
+        if (!array_ || !isDouble())
+            return result;
+        size_t rows = getM();
+        size_t cols = getN();
+        if (col >= cols)
+            throw std::out_of_range("Column index out of range");
+        result.reserve(rows);
+        for (size_t row = 0; row < rows; row++)
+            result.push_back(array_[row][col]);
+        return result;
+    }
 
     // ===== Convenience Methods for Common Types =====
 
     /**
      * @brief Get scalar double value
      */
-    double MatlabArray::getScalar() const 
+    double MatlabArray::getScalar() const
     {
         if (!isDouble() || getNumberOfElements() != 1) {
             throw std::runtime_error("Array is not a scalar double");
         }
-		return (*array_)[0];
+        return (*array_)[0];
     }
 
     /**
      * @brief Get vector of doubles
      */
-    std::vector<double> MatlabArray::getDoubleVector() const 
+    std::vector<double> MatlabArray::getDoubleVector() const
     {
         if (!isDouble()) {
             throw std::runtime_error("Array is not double type");
         }
         size_t size = getNumberOfElements();
-		std::vector<double> data(size);
-		for (size_t i = 0; i < size; i++)
-			data[i] = (*array_)[i];
+        std::vector<double> data(size);
+        for (size_t i = 0; i < size; i++)
+            data[i] = (*array_)[i];
         return data;
     }
 
     /**
      * @brief Get string value
      */
-    std::string MatlabArray::getString() const 
+    std::string MatlabArray::getString() const
     {
         if (!isChar()) {
             throw std::runtime_error("Array is not char type");
         }
-		matlab::data::CharArray charArray = (*array_)[0]; // Assuming single string
-		return std::string(charArray.begin(), charArray.end());
+        matlab::data::CharArray charArray = (*array_)[0]; // Assuming single string
+        return std::string(charArray.begin(), charArray.end());
     }
 
     /**
      * @brief Get logical vector
      */
-    std::vector<bool> MatlabArray::getLogicalVector() const 
+    std::vector<bool> MatlabArray::getLogicalVector() const
     {
         if (!isLogical()) {
             throw std::runtime_error("Array is not logical type");
         }
-        
-		size_t size = getNumberOfElements();
-		std::vector<bool> data(size);
-		for (size_t i = 0; i < size; i++)
-			data[i] = static_cast<bool>((*array_)[i]);
-		return data;
+
+        size_t size = getNumberOfElements();
+        std::vector<bool> data(size);
+        for (size_t i = 0; i < size; i++)
+            data[i] = static_cast<bool>((*array_)[i]);
+        return data;
     }
 
     /**
      * @brief Get matrix data in row-major order (converts from MATLAB's column-major)
      */
-    std::vector<std::vector<double>> MatlabArray::getDoubleMatrix() const 
+    std::vector<std::vector<double>> MatlabArray::getDoubleMatrix() const
     {
         if (!isDouble()) {
             throw std::runtime_error("Array is not double type");
@@ -424,7 +448,7 @@ namespace MatlabAPI
 
         size_t rows = getM();
         size_t cols = getN();
-        
+
 
         std::vector<std::vector<double>> result(rows, std::vector<double>(cols));
         for (size_t i = 0; i < rows; i++) {
@@ -437,7 +461,7 @@ namespace MatlabAPI
 
     // ===== Cell Array Access =====
 
-    MatlabArray MatlabArray::getCell(size_t index) const 
+    MatlabArray MatlabArray::getCell(size_t index) const
     {
         if (!isCell()) {
             throw std::runtime_error("Array is not a cell array");
@@ -446,11 +470,11 @@ namespace MatlabAPI
             throw std::out_of_range("Cell index out of range");
         }
         std::string name = m_name + "_" + std::to_string(index);
-		matlab::data::Array cell = (*array_)[index];
-        return MatlabArray(name, cell); 
+        matlab::data::Array cell = (*array_)[index];
+        return MatlabArray(name, cell);
     }
 
-    void MatlabArray::setCell(size_t index, const MatlabArray& value) 
+    void MatlabArray::setCell(size_t index, const MatlabArray& value)
     {
         if (!isCell()) {
             throw std::runtime_error("Array is not a cell array");
@@ -458,12 +482,12 @@ namespace MatlabAPI
         if (index >= getNumberOfElements()) {
             throw std::out_of_range("Cell index out of range");
         }
-		(*array_)[index] = *(value.array_);
+        (*array_)[index] = *(value.array_);
     }
 
     // ===== Struct Field Access =====
 
-    std::vector<std::string> MatlabArray::getFieldNames() const 
+    std::vector<std::string> MatlabArray::getFieldNames() const
     {
         if (!isStruct()) {
             throw std::runtime_error("Array is not a struct");
@@ -483,13 +507,13 @@ namespace MatlabAPI
         if (!isStruct()) {
             throw std::runtime_error("Array is not a struct");
         }
-		std::string name = m_name + "_" + fieldname + "_" + std::to_string(index);
+        std::string name = m_name + "_" + fieldname + "_" + std::to_string(index);
         (*array_)[index]
 
         return MatlabArray(name, , false);
     }
 
-    void MatlabArray::setField(const std::string& fieldname, const MatlabArray& value, size_t index) 
+    void MatlabArray::setField(const std::string& fieldname, const MatlabArray& value, size_t index)
     {
         if (!isStruct()) {
             throw std::runtime_error("Array is not a struct");
@@ -502,13 +526,13 @@ namespace MatlabAPI
     /**
      * @brief Print array information to stream
      */
-    void MatlabArray::print(std::ostream& os) const 
+    void MatlabArray::print(std::ostream& os) const
     {
         if (!array_) {
             os << "Invalid/null matlab::data::Array" << std::endl;
             return;
         }
-		os << "Variable Name: " << (m_name.empty() ? "<unnamed>" : m_name) << std::endl;
+        os << "Variable Name: " << (m_name.empty() ? "<unnamed>" : m_name) << std::endl;
         os << "Class: " << getClassName() << std::endl;
         os << "Size: ";
         auto dims = getDimensions();
@@ -548,7 +572,7 @@ namespace MatlabAPI
      * @brief Clone the array
      */
     MatlabArray MatlabArray::clone() const {
-        if (!array_) 
+        if (!array_)
             return MatlabArray("");
         return MatlabArray(m_name, *array_);
     }
@@ -556,14 +580,14 @@ namespace MatlabAPI
     bool MatlabArray::updateFromEngine()
     {
         if (m_owner)
-			return m_owner->updateVariableFromEngine(this);
+            return m_owner->updateVariableFromEngine(this);
         return false;
     }
     bool MatlabArray::updateToEngine()
     {
         if (m_owner)
             return m_owner->sendVariableToEngine(this);
-		return false;
+        return false;
     }
 
     // ===== Operators =====
@@ -571,16 +595,16 @@ namespace MatlabAPI
 
     std::string MatlabArray::toString() const
     {
-		std::ostringstream oss;
-		print(oss);
-		return oss.str();
+        std::ostringstream oss;
+        print(oss);
+        return oss.str();
     }
 
     const matlab::data::Array& MatlabArray::getAPIArray() const
     {
-		if (!array_)
-			throw std::runtime_error("Array is null");
-		return *array_;
+        if (!array_)
+            throw std::runtime_error("Array is null");
+        return *array_;
     }
 
     // Stream operator
