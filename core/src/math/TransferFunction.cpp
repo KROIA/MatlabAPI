@@ -38,7 +38,7 @@ namespace MatlabAPI
 		}
 	}
 
-	StateSpaceModel TransferFunction::toStateSpaceModel() const
+	StateSpaceModel TransferFunction::toStateSpaceModel(double timeStep) const
 	{
 		if (!MatlabEngine::isInstantiated())
 		{
@@ -46,9 +46,8 @@ namespace MatlabAPI
 		}
 
 
-		double dt = MatlabEngine::getDiscreteTimeStep();
 		putInMatlabWorkspace("sys");
-		MatlabEngine::eval(("sysd = c2d(sys, " + std::to_string(dt) + ", 'zoh'); [Ad,Bd,Cd,Dd] = ssdata(ss(sysd)); [A,B,C,D] = ssdata(ss(sys));").c_str());
+		MatlabEngine::eval(("sysd = c2d(sys, " + std::to_string(timeStep) + ", 'zoh'); [Ad,Bd,Cd,Dd] = ssdata(ss(sysd)); [A,B,C,D] = ssdata(ss(sys));").c_str());
 		Matrix Ad = MatlabEngine::getMatrix("Ad");
 		Matrix Bd = MatlabEngine::getMatrix("Bd");
 		Matrix Cd = MatlabEngine::getMatrix("Cd");
@@ -59,7 +58,7 @@ namespace MatlabAPI
 		Matrix C = MatlabEngine::getMatrix("C");
 		Matrix D = MatlabEngine::getMatrix("D");
 
-		return StateSpaceModel(A, B, C, D, Ad, Bd, Cd, Dd, Matrix(B.getRows(), 1));
+		return StateSpaceModel(A, B, C, D, Ad, Bd, Cd, Dd, Matrix(B.getRows(), 1), timeStep);
 	}
 
 	void TransferFunction::putInMatlabWorkspace(const std::string& varName) const

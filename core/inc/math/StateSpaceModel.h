@@ -9,10 +9,10 @@ namespace MatlabAPI
 	class MATLAB_API StateSpaceModel
 	{
 	public:
-		StateSpaceModel(const Matrix& A, const Matrix& B, const Matrix& C, const Matrix& D, const Matrix& x0);
+		StateSpaceModel(const Matrix& A, const Matrix& B, const Matrix& C, const Matrix& D, const Matrix& x0, double timeStep);
 		StateSpaceModel(const Matrix& A, const Matrix& B, const Matrix& C, const Matrix& D, 
 			const Matrix& Ad, const Matrix& Bd, const Matrix& Cd, const Matrix& Dd,
-			const Matrix& x0);
+			const Matrix& x0, double timeStep);
 		StateSpaceModel(const StateSpaceModel& other);
 		~StateSpaceModel();
 
@@ -32,6 +32,8 @@ namespace MatlabAPI
 		const Matrix& getBd() const { return Bd; }
 		const Matrix& getCd() const { return Cd; }
 		const Matrix& getDd() const { return Dd; }
+
+		double getTimeStep() const { return timeStep; }
 
 		void reset() { x = x0; }
 		void reset(const std::vector<double> &x0) 
@@ -64,5 +66,6 @@ namespace MatlabAPI
 		Matrix Bd; // Input matrix
 		Matrix Cd; // Output matrix
 		Matrix Dd; // Feedthrough (or direct transmission) matrix
+		double timeStep; // Time step for discrete model
 	};
 }

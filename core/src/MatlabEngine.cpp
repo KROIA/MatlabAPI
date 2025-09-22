@@ -386,25 +386,6 @@ namespace MatlabAPI
 		return names;
 	}
 
-	double MatlabEngine::getDiscreteTimeStep()
-	{
-		if (s_instance == nullptr)
-		{
-			err_matlabNotStarted();
-			return 0.0;
-		}
-		return s_instance->m_discreteTimeStep;
-	}
-	void MatlabEngine::setDiscreteTimeStep(double dt)
-	{
-		if (s_instance == nullptr)
-		{
-			err_matlabNotStarted();
-			return;
-		}
-		s_instance->m_discreteTimeStep = dt;
-	}
-
 #ifdef MATLAB_API_USE_CPP_API
 	const std::unique_ptr<matlab::engine::MATLABEngine> &MatlabEngine::getEngine()
 	{

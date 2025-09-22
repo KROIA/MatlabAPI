@@ -3,7 +3,7 @@
 
 namespace MatlabAPI
 {
-	StateSpaceModel::StateSpaceModel(const Matrix& A, const Matrix& B, const Matrix& C, const Matrix& D, const Matrix& x0)
+	StateSpaceModel::StateSpaceModel(const Matrix& A, const Matrix& B, const Matrix& C, const Matrix& D, const Matrix& x0, double timeStep)
 		: A(A)
 		, B(B)
 		, C(C)
@@ -11,17 +11,18 @@ namespace MatlabAPI
 		, x0(x0)
 		, x(x0)
 		, y(C.getRows(), 1)
+		, timeStep(timeStep)
 	{
 		if (!MatlabEngine::isInstantiated())
 		{
 			throw std::runtime_error("Matlab engine is not instantiated.");
 		}
-		double dt = MatlabEngine::getDiscreteTimeStep();
+		
 		MatlabEngine::addVariable(A.toMatlabArray("A"));
 		MatlabEngine::addVariable(B.toMatlabArray("B"));
 		MatlabEngine::addVariable(C.toMatlabArray("C"));
 		MatlabEngine::addVariable(D.toMatlabArray("D"));
-		MatlabEngine::eval(("sys = ss(A, B, C, D); sysd = c2d(sys, " + std::to_string(dt) + ", 'zoh'); [Ad,Bd,Cd,Dd] = ssdata(sysd);").c_str());
+		MatlabEngine::eval(("sys = ss(A, B, C, D); sysd = c2d(sys, " + std::to_string(timeStep) + ", 'zoh'); [Ad,Bd,Cd,Dd] = ssdata(sysd);").c_str());
 		Ad = MatlabEngine::getMatrix("Ad");
 		Bd = MatlabEngine::getMatrix("Bd");
 		Cd = MatlabEngine::getMatrix("Cd");
@@ -35,7 +36,7 @@ namespace MatlabAPI
 	}
 	StateSpaceModel::StateSpaceModel(const Matrix& A, const Matrix& B, const Matrix& C, const Matrix& D,
 		const Matrix& Ad, const Matrix& Bd, const Matrix& Cd, const Matrix& Dd,
-		const Matrix& x0)
+		const Matrix& x0, double timeStep)
 		: A(A)
 		, B(B)
 		, C(C)
@@ -47,6 +48,7 @@ namespace MatlabAPI
 		, Bd(Bd)
 		, Cd(Cd)
 		, Dd(Dd)
+		, timeStep(timeStep)
 	{
 		
 	}
@@ -61,6 +63,7 @@ namespace MatlabAPI
 		, Bd(other.Bd)
 		, Cd(other.Cd)
 		, Dd(other.Dd)
+		, timeStep(other.timeStep)
 	{
 
 	}

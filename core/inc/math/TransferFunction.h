@@ -29,7 +29,7 @@ namespace MatlabAPI
 		void setDenominator(const std::vector<double>& den) { denominator = den; }
 		const std::vector<double>& getDenominator() const { return denominator; }
 
-		StateSpaceModel toStateSpaceModel() const;
+		StateSpaceModel toStateSpaceModel(double timeStep) const;
 		void putInMatlabWorkspace(const std::string& varName) const;
 
 

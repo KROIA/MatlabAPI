@@ -32,7 +32,7 @@ private:
 		double zeta = 0.2;
 
 		TransferFunction tf({ wn * wn }, { 1, 2 * zeta * wn, wn * wn });
-		StateSpaceModel model = tf.toStateSpaceModel();
+		StateSpaceModel model = tf.toStateSpaceModel(0.01);
 		Matrix u({ {1} });
 
 		TEST_MESSAGE("State-Space Model:\n" + model.toString() + "\n");
@@ -49,7 +49,7 @@ private:
 			{
 				TEST_MESSAGE("Step " + std::to_string(i) + ": y = \n" + model.getOutput().toString());
 				std::vector<double> row;
-				row.push_back(i * MatlabEngine::getDiscreteTimeStep());
+				row.push_back(i * model.getTimeStep());
 
 				for (size_t i = 0; i < u.getRows(); ++i)
 					row.push_back(u(i, 0));
@@ -101,7 +101,7 @@ private:
 			    {tf_21, tf_22} 
 			});
 
-		StateSpaceModel model = mimoSys.toStateSpaceModel();
+		StateSpaceModel model = mimoSys.toStateSpaceModel(0.01);
 		Matrix u(
 			{ {1},
 			  {1} });
@@ -121,7 +121,7 @@ private:
 			{
 				TEST_MESSAGE("Step " + std::to_string(i) + ": y = \n" + model.getOutput().toString());
 				std::vector<double> row;
-				row.push_back(i * MatlabEngine::getDiscreteTimeStep());
+				row.push_back(i * model.getTimeStep());
 
 				for (size_t i = 0; i < u.getRows(); ++i)
 					row.push_back(u(i, 0));

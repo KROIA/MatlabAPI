@@ -53,8 +53,6 @@ namespace MatlabAPI
 #endif
 
 
-		static double getDiscreteTimeStep();
-		static void setDiscreteTimeStep(double dt);
 	private:
 #ifdef MATLAB_API_USE_CPP_API
 		static const std::unique_ptr<matlab::engine::MATLABEngine> &getEngine();
@@ -67,7 +65,7 @@ namespace MatlabAPI
 
 		static void err_matlabNotStarted();
 
-		double m_discreteTimeStep = 0.01;
+	
 		std::unordered_map<std::string, MatlabArray*> m_variables; // map of variable name to MatlabArray
 	};
 }

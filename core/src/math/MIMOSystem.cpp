@@ -92,7 +92,7 @@ namespace MatlabAPI
 		return *this;
 	}
 
-	StateSpaceModel MIMOSystem::toStateSpaceModel() const
+	StateSpaceModel MIMOSystem::toStateSpaceModel(double timeStep) const
 	{
 		if (!MatlabEngine::isInstantiated())
 		{
@@ -125,8 +125,7 @@ namespace MatlabAPI
 		}
 		mimoExpr += "];";
 		MatlabEngine::eval(mimoExpr.c_str());
-		double dt = MatlabEngine::getDiscreteTimeStep();
-		MatlabEngine::eval(("mimo_sysd = c2d(" + mimoVarName + ", " + std::to_string(dt) + ", 'zoh'); [Ad,Bd,Cd,Dd] = ssdata(ss(mimo_sysd)); [A,B,C,D] = ssdata(ss(mimo_sys_temp));").c_str());
+		MatlabEngine::eval(("mimo_sysd = c2d(" + mimoVarName + ", " + std::to_string(timeStep) + ", 'zoh'); [Ad,Bd,Cd,Dd] = ssdata(ss(mimo_sysd)); [A,B,C,D] = ssdata(ss(mimo_sys_temp));").c_str());
 
 		Matrix Ad = MatlabEngine::getMatrix("Ad");
 		Matrix Bd = MatlabEngine::getMatrix("Bd");
@@ -138,6 +137,6 @@ namespace MatlabAPI
 		Matrix C = MatlabEngine::getMatrix("C");
 		Matrix D = MatlabEngine::getMatrix("D");
 
-		return StateSpaceModel(A, B, C, D, Ad, Bd, Cd, Dd, Matrix(B.getRows(), 1));
+		return StateSpaceModel(A, B, C, D, Ad, Bd, Cd, Dd, Matrix(B.getRows(), 1), timeStep);
 	}
 }
