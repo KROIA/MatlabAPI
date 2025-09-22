@@ -18,6 +18,9 @@ namespace MatlabAPI
 
 		
 		void processTimeStep(const Matrix& u);
+		void processTimeStepApproxContinuesEuler(const Matrix& u);
+		void processTimeStepApproxContinuesBilinear(const Matrix& u);
+		void processTimeStepApproxContinuesRk4(const Matrix& u);
 
 		void setState(const Matrix& x);
 		const Matrix& getState() const { return x; }

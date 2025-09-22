@@ -78,6 +78,33 @@ namespace MatlabAPI
 		x = Ad * x + Bd * u;
 		y = Cd * x + Dd * u;
 	}
+	void StateSpaceModel::processTimeStepApproxContinuesEuler(const Matrix& u)
+	{
+		x += (A * x + B * u) * timeStep;
+		y = C * x + D * u;
+	}
+	void StateSpaceModel::processTimeStepApproxContinuesBilinear(const Matrix& u)
+	{
+		x += (A * x + B * u) * timeStep * 0.5;
+		y = C * x + D * u;
+	}
+	void StateSpaceModel::processTimeStepApproxContinuesRk4(const Matrix& u)
+	{
+		auto f = [&](const Matrix& x_in) {
+			return A * x_in + B * u;
+			};
+
+		double timestep2 = timeStep / 2.0;
+
+		Matrix k1 = f(x);
+		Matrix k2 = f(x + k1 * timestep2);
+		Matrix k3 = f(x + k2 * timestep2);
+		Matrix k4 = f(x + k3 * timeStep);
+
+		x += (k1 + k2 * 2.0 + k3 * 2.0 + k4) * (timeStep / 6.0);
+
+		y = C * x + D * u;
+	}
 
 	void StateSpaceModel::setState(const Matrix& x)
 	{
