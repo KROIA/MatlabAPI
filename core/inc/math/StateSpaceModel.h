@@ -3,16 +3,26 @@
 #include "Matrix.h"
 //#include "TransferFunction.h"
 #include <vector>
+#include <string>
 
 namespace MatlabAPI
 {
 	class MATLAB_API StateSpaceModel
 	{
 	public:
-		StateSpaceModel(const Matrix& A, const Matrix& B, const Matrix& C, const Matrix& D, const Matrix& x0, double timeStep);
+		enum C2DMethod
+		{
+			ZeroOrderHold,
+			FirstOrderHold,
+			Tustin,
+			MatchedPoleZero,
+			ImpulseInvariant,
+			PrewarpedTustin
+		};
+		StateSpaceModel(const Matrix& A, const Matrix& B, const Matrix& C, const Matrix& D, const Matrix& x0, double timeStep, C2DMethod method);
 		StateSpaceModel(const Matrix& A, const Matrix& B, const Matrix& C, const Matrix& D, 
 			const Matrix& Ad, const Matrix& Bd, const Matrix& Cd, const Matrix& Dd,
-			const Matrix& x0, double timeStep);
+			const Matrix& x0, double timeStep, C2DMethod method);
 		StateSpaceModel(const StateSpaceModel& other);
 		~StateSpaceModel();
 
@@ -37,6 +47,7 @@ namespace MatlabAPI
 		const Matrix& getDd() const { return Dd; }
 
 		double getTimeStep() const { return timeStep; }
+		C2DMethod getC2DMethod() const { return c2dMethod; }
 
 		void reset() { x = x0; }
 		void reset(const std::vector<double> &x0) 
@@ -56,6 +67,35 @@ namespace MatlabAPI
 		// Stream operator
 		friend std::ostream& operator<<(std::ostream& os, const StateSpaceModel& model);
 
+
+		static std::string c2dMethodToString(C2DMethod method)
+		{
+			using namespace std::string_literals;
+			switch (method)
+			{
+			case ZeroOrderHold:    return "Zero-Order Hold"s;
+			case FirstOrderHold:   return "First-Order Hold"s;
+			case Tustin:           return "Tustin (Bilinear Transformation)"s;
+			case MatchedPoleZero:  return "Matched Pole-Zero"s;
+			case ImpulseInvariant: return "Impulse Invariant"s;
+			case PrewarpedTustin:  return "Prewarped Tustin"s;      
+			}
+			return "Unknown Method"s;
+		}
+		static std::string c2dMethodToMatlabString(C2DMethod method)
+		{
+			using namespace std::string_literals;
+			switch (method)
+			{
+			case ZeroOrderHold:    return "zoh"s;
+			case FirstOrderHold:   return "foh"s;
+			case Tustin:           return "tustin"s;
+			case MatchedPoleZero:  return "matched"s;
+			case ImpulseInvariant: return "impulse"s;
+			case PrewarpedTustin:  return "prewarp"s;
+			}
+			return "Unknown Method"s;
+		}
 	private:
 		Matrix A; // System matrix
 		Matrix B; // Input matrix
@@ -70,5 +110,6 @@ namespace MatlabAPI
 		Matrix Cd; // Output matrix
 		Matrix Dd; // Feedthrough (or direct transmission) matrix
 		double timeStep; // Time step for discrete model
+		C2DMethod c2dMethod;
 	};
 }

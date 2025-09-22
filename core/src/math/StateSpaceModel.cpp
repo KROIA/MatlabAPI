@@ -3,7 +3,8 @@
 
 namespace MatlabAPI
 {
-	StateSpaceModel::StateSpaceModel(const Matrix& A, const Matrix& B, const Matrix& C, const Matrix& D, const Matrix& x0, double timeStep)
+	StateSpaceModel::StateSpaceModel(const Matrix& A, const Matrix& B, const Matrix& C, const Matrix& D, const Matrix& x0, 
+		double timeStep, C2DMethod method)
 		: A(A)
 		, B(B)
 		, C(C)
@@ -12,6 +13,7 @@ namespace MatlabAPI
 		, x(x0)
 		, y(C.getRows(), 1)
 		, timeStep(timeStep)
+		, c2dMethod(method)
 	{
 		if (!MatlabEngine::isInstantiated())
 		{
@@ -36,7 +38,7 @@ namespace MatlabAPI
 	}
 	StateSpaceModel::StateSpaceModel(const Matrix& A, const Matrix& B, const Matrix& C, const Matrix& D,
 		const Matrix& Ad, const Matrix& Bd, const Matrix& Cd, const Matrix& Dd,
-		const Matrix& x0, double timeStep)
+		const Matrix& x0, double timeStep, C2DMethod method)
 		: A(A)
 		, B(B)
 		, C(C)
@@ -49,6 +51,7 @@ namespace MatlabAPI
 		, Cd(Cd)
 		, Dd(Dd)
 		, timeStep(timeStep)
+		, c2dMethod(method)
 	{
 		
 	}

@@ -22,7 +22,7 @@ namespace MatlabAPI
 		MIMOSystem& operator=(const MIMOSystem& other);
 		MIMOSystem& operator=(MIMOSystem&& other) noexcept;
 
-		StateSpaceModel toStateSpaceModel(double timeStep) const;
+		StateSpaceModel toStateSpaceModel(double timeStep, StateSpaceModel::C2DMethod methode = StateSpaceModel::C2DMethod::ZeroOrderHold) const;
 
 	private:
 		TransferFunction* m_systemMatrix = nullptr;
