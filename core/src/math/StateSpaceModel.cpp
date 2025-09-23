@@ -3,6 +3,8 @@
 
 namespace MatlabAPI
 {
+	StateSpaceModel::IntegrationSolver StateSpaceModel::defaultSolver = StateSpaceModel::IntegrationSolver::Discretized;
+
 	StateSpaceModel::StateSpaceModel(const Matrix& A, const Matrix& B, const Matrix& C, const Matrix& D, const Matrix& x0, 
 		double timeStep, C2DMethod method)
 		: A(A)
@@ -14,6 +16,7 @@ namespace MatlabAPI
 		, y(C.getRows(), 1)
 		, timeStep(timeStep)
 		, c2dMethod(method)
+		, solver(defaultSolver)
 	{
 		if (!MatlabEngine::isInstantiated())
 		{
@@ -52,6 +55,7 @@ namespace MatlabAPI
 		, Dd(Dd)
 		, timeStep(timeStep)
 		, c2dMethod(method)
+		, solver(defaultSolver)
 	{
 		
 	}
@@ -67,6 +71,8 @@ namespace MatlabAPI
 		, Cd(other.Cd)
 		, Dd(other.Dd)
 		, timeStep(other.timeStep)
+		, c2dMethod(other.c2dMethod)
+		, solver(other.solver)
 	{
 
 	}
@@ -77,6 +83,16 @@ namespace MatlabAPI
 
 
 	void StateSpaceModel::processTimeStep(const Matrix& u)
+	{
+		switch (solver)
+		{
+		case IntegrationSolver::Discretized: processTimeStepDiscretized(u);  break;
+		case IntegrationSolver::Euler:       processTimeStepEuler(u);        break;
+		case IntegrationSolver::Bilinear:    processTimeStepBilinear(u);     break;
+		case IntegrationSolver::Rk4:         processTimeStepRk4(u);          break;
+		}
+	}
+	void StateSpaceModel::processTimeStepDiscretized(const Matrix& u)
 	{
 		x = Ad * x + Bd * u;
 		y = Cd * x + Dd * u;
