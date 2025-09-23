@@ -9,6 +9,7 @@ namespace MatlabAPI
 {
 	class MATLAB_API StateSpaceModel
 	{
+		typedef void (StateSpaceModel::* ProcessTimeStepFunc)(const Matrix& u);
 	public:
 		/**
 		 * @brief 
@@ -73,7 +74,7 @@ namespace MatlabAPI
 		StateSpaceModel(const StateSpaceModel& other);
 		~StateSpaceModel();
 
-		void setIntegrationSolver(IntegrationSolver solver) { this->solver = solver; }
+		void setIntegrationSolver(IntegrationSolver solver);
 		IntegrationSolver getIntegrationSolver() const { return solver; }
 
 		static void setDefaultIntegrationSolver(IntegrationSolver solver) { defaultSolver = solver; }
@@ -83,7 +84,10 @@ namespace MatlabAPI
 		 * @brief Automatically process one time step using the selected integration solver
 		 * @param u input of the system. Must be a column vector with size equal to the number of inputs of the system (B.cols)
 		 */
-		void processTimeStep(const Matrix& u);
+		void processTimeStep(const Matrix& u)
+		{
+			(this->*processTimeStepFunc)(u);
+		}
 
 		/**
 		 * @brief Explicitly process one time step using the discretized model
@@ -203,6 +207,7 @@ namespace MatlabAPI
 		C2DMethod c2dMethod;
 
 		IntegrationSolver solver;
+		ProcessTimeStepFunc processTimeStepFunc;
 		static IntegrationSolver defaultSolver;
 	};
 }

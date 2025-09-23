@@ -18,6 +18,7 @@ namespace MatlabAPI
 		, c2dMethod(method)
 		, solver(defaultSolver)
 	{
+		setIntegrationSolver(solver);
 		if (!MatlabEngine::isInstantiated())
 		{
 			throw std::runtime_error("Matlab engine is not instantiated.");
@@ -57,7 +58,7 @@ namespace MatlabAPI
 		, c2dMethod(method)
 		, solver(defaultSolver)
 	{
-		
+		setIntegrationSolver(solver);
 	}
 	StateSpaceModel::StateSpaceModel(const StateSpaceModel& other)
 		: A(other.A)
@@ -73,6 +74,7 @@ namespace MatlabAPI
 		, timeStep(other.timeStep)
 		, c2dMethod(other.c2dMethod)
 		, solver(other.solver)
+		, processTimeStepFunc(other.processTimeStepFunc)
 	{
 
 	}
@@ -81,17 +83,21 @@ namespace MatlabAPI
 
 	}
 
-
-	void StateSpaceModel::processTimeStep(const Matrix& u)
-	{
+	void StateSpaceModel::setIntegrationSolver(IntegrationSolver solver) 
+	{ 
+		this->solver = solver; 
+		processTimeStepFunc = &StateSpaceModel::processTimeStepDiscretized;
 		switch (solver)
 		{
-		case IntegrationSolver::Discretized: processTimeStepDiscretized(u);  break;
-		case IntegrationSolver::Euler:       processTimeStepEuler(u);        break;
-		case IntegrationSolver::Bilinear:    processTimeStepBilinear(u);     break;
-		case IntegrationSolver::Rk4:         processTimeStepRk4(u);          break;
+		case IntegrationSolver::Discretized:  processTimeStepFunc = &StateSpaceModel::processTimeStepDiscretized;       break;
+		case IntegrationSolver::Euler:        processTimeStepFunc = &StateSpaceModel::processTimeStepEuler;				break;
+		case IntegrationSolver::Bilinear:     processTimeStepFunc = &StateSpaceModel::processTimeStepBilinear;			break;
+		case IntegrationSolver::Rk4:          processTimeStepFunc = &StateSpaceModel::processTimeStepRk4;				break;
 		}
 	}
+
+
+	
 	void StateSpaceModel::processTimeStepDiscretized(const Matrix& u)
 	{
 		x = Ad * x + Bd * u;
