@@ -175,11 +175,12 @@ namespace MatlabAPI
 			{
 				delete s_instance;
 				s_instance = nullptr;
-				Logger::logWarning("Retrying to start MATLAB engine ["+std::to_string(initialRetryCount-retryCount)+"/"+std::to_string(initialRetryCount)+"]");
+				
 				size_t sleepMillis = 1000;
 				auto startTime = std::chrono::high_resolution_clock::now();
 				while (std::chrono::high_resolution_clock::now() - startTime < std::chrono::milliseconds(sleepMillis))
 					QApplication::processEvents();
+				Logger::logWarning("Retrying to start MATLAB engine [" + std::to_string(initialRetryCount - retryCount) + "/" + std::to_string(initialRetryCount) + "]");
 			}
 		} while (s_engine == nullptr && --retryCount > 0);
 		if(!s_engine)
