@@ -11,13 +11,13 @@
 #ifndef BUILD_STATIC
 	//#pragma message("MATLAB_API_LIB is a shared library")
 	#if defined(MATLAB_API_LIB)
-		#define _API __declspec(dllexport)
+		#define MATLAB_API __declspec(dllexport)
 	#else
-		#define _API __declspec(dllimport)
+		#define MATLAB_API __declspec(dllimport)
 	#endif
 #else 
 	//#pragma message("MATLAB_API_LIB is a static library")
-	#define _API
+	#define MATLAB_API
 #endif
 
 /// USER_SECTION_START 2
