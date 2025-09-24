@@ -564,7 +564,7 @@ namespace MatlabAPI
             // You can iterate elements and fields if you want
         }
         else {
-            os << "Unsupported array type: " << typeid(*array_).name() << std::endl;
+            os << "array type: " << typeid(*array_).name() << std::endl;
         }
     }
 

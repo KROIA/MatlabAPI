@@ -15,18 +15,15 @@ int main(int argc, char* argv[])
 	//std::vector<std::u16string> names = matlab::engine::findMATLAB();
 	//auto matlabPtr = matlab::engine::connectMATLAB(u"MySession");
 
-	if (!MatlabEngine::instantiate(u"MySession"))
+	if (!MatlabEngine::instantiate())
 	{
-		QApplication::processEvents();
-		if (!MatlabEngine::instantiate())
-		{
-			Logger::logError("Could not start MATLAB engine");
-		}
-		else
-		{
-			Logger::logInfo("Started MATLAB engine without session name");
-		}
+		Logger::logError("Could not start MATLAB engine");
 	}
+	else
+	{
+		Logger::logInfo("Started MATLAB engine without session name");
+	}
+	QApplication::processEvents();
 	if (MatlabEngine::isInstantiated())
 	{
 		std::cout << "Running " << UnitTest::Test::getTests().size() << " tests...\n";
