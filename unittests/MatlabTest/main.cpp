@@ -17,17 +17,29 @@ int main(int argc, char* argv[])
 
 	if (!MatlabEngine::instantiate(u"MySession"))
 	{
+		QApplication::processEvents();
 		if (!MatlabEngine::instantiate())
 		{
 			Logger::logError("Could not start MATLAB engine");
 		}
+		else
+		{
+			Logger::logInfo("Started MATLAB engine without session name");
+		}
 	}
+	if (MatlabEngine::isInstantiated())
+	{
+		std::cout << "Running " << UnitTest::Test::getTests().size() << " tests...\n";
+		UnitTest::Test::TestResults results;
+		UnitTest::Test::runAllTests(results);
+		UnitTest::Test::printResults(results);
 
-	std::cout << "Running "<< UnitTest::Test::getTests().size() << " tests...\n";
-	UnitTest::Test::TestResults results;
-	UnitTest::Test::runAllTests(results);
-	UnitTest::Test::printResults(results);
-
-	MatlabAPI::MatlabEngine::terminate();
-	return results.getSuccess();
+		MatlabAPI::MatlabEngine::terminate();
+		return results.getSuccess();
+	}
+	else
+	{
+		Logger::logError("MATLAB engine is not instantiated, can't run tests");
+		return -1;
+	}
 }

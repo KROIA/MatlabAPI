@@ -106,7 +106,10 @@ namespace MatlabAPI
 		// Start MATLAB engine
 #ifdef MATLAB_API_USE_CPP_API
 		//s_engine = matlab::engine::connectMATLAB(to_u16string(startcmd));
-		s_engine = matlab::engine::connectMATLAB(startcmd);
+		if (startcmd.empty())
+			s_engine = matlab::engine::startMATLAB(); // start a new MATLAB engine
+		else
+			s_engine = matlab::engine::connectMATLAB(startcmd);
 #else
 		s_engine = engOpen(startcmd); // open a MATLAB engine
 #endif	
@@ -155,21 +158,32 @@ namespace MatlabAPI
 #else
 	bool MatlabEngine::instantiate(const char* startcmd, int retryCount)
 #endif
-	
 	{
+		int initialRetryCount = retryCount;
 		do {
 			if (s_instance != nullptr)
 				return true; // already instantiated
-			s_instance = new MatlabEngine(startcmd);
+			try{
+				s_instance = new MatlabEngine(startcmd);
+			}
+			catch (const std::exception& e) {
+				Logger::logError(std::string("Exception while starting MATLAB engine: ") + e.what());
+				s_instance = nullptr;
+			}
+			
 			if (s_engine == nullptr)
 			{
 				delete s_instance;
 				s_instance = nullptr;
-				Logger::logWarning("Retrying to start MATLAB engine...");
+				Logger::logWarning("Retrying to start MATLAB engine ["+std::to_string(initialRetryCount-retryCount)+"/"+std::to_string(initialRetryCount)+"]");
 				QThread::msleep(1000); // wait a bit before retrying
 			}
 		} while (s_engine == nullptr && --retryCount > 0);
-		return true;
+		if(!s_engine)
+		{
+			Logger::logError("Failed to start MATLAB engine after multiple attempts.");
+		}
+		return s_engine != nullptr;
 	}
 #ifndef MATLAB_API_USE_CPP_API
 	bool MatlabEngine::instantiate(const std::u16string& startcmd, int retryCount)
