@@ -2,7 +2,7 @@
 
 
 
-
+#include "QApplication.h"
 #include "MatlabAPI_debug.h"
 #ifdef MATLAB_API_USE_CPP_API
 #include "MatlabEngine.hpp"
@@ -176,7 +176,10 @@ namespace MatlabAPI
 				delete s_instance;
 				s_instance = nullptr;
 				Logger::logWarning("Retrying to start MATLAB engine ["+std::to_string(initialRetryCount-retryCount)+"/"+std::to_string(initialRetryCount)+"]");
-				QThread::msleep(1000); // wait a bit before retrying
+				size_t sleepMillis = 1000;
+				auto startTime = std::chrono::high_resolution_clock::now();
+				while (std::chrono::high_resolution_clock::now() - startTime < std::chrono::milliseconds(sleepMillis))
+					QApplication::processEvents();
 			}
 		} while (s_engine == nullptr && --retryCount > 0);
 		if(!s_engine)
