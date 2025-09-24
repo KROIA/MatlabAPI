@@ -66,5 +66,7 @@
 #endif
 
 /// USER_SECTION_START 5
-
+#if defined(MATLAB_API_LIB)
+	#pragma warning (default  : 4100) // Unused variables | set back to default because the matlab API is used and would create errors
+#endif
 /// USER_SECTION_END
