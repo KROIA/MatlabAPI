@@ -29,7 +29,7 @@ namespace MatlabAPI
 
 /// USER_SECTION_END
 
-	class MATLAB_API LibraryInfo
+	class _API LibraryInfo
 	{
 		LibraryInfo() = delete;
 		LibraryInfo(const LibraryInfo&) = delete;
