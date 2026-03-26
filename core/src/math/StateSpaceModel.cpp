@@ -13,6 +13,7 @@ namespace MatlabAPI
 		, D(D)
 		, x0(x0)
 		, x(x0)
+		, lastXDot(Matrix(A.getRows(), 1))
 		, y(C.getRows(), 1)
 		, timeStep(timeStep)
 		, c2dMethod(method)
@@ -28,7 +29,8 @@ namespace MatlabAPI
 		MatlabEngine::addVariable(B.toMatlabArray("B"));
 		MatlabEngine::addVariable(C.toMatlabArray("C"));
 		MatlabEngine::addVariable(D.toMatlabArray("D"));
-		MatlabEngine::eval(("sys = ss(A, B, C, D); sysd = c2d(sys, " + std::to_string(timeStep) + ", 'zoh'); [Ad,Bd,Cd,Dd] = ssdata(sysd);").c_str());
+		std::string methode = c2dMethodToMatlabString(method);
+		MatlabEngine::eval(("sys = ss(A, B, C, D); sysd = c2d(sys, " + std::to_string(timeStep) + ", '"+ methode+"'); [Ad,Bd,Cd,Dd] = ssdata(sysd);").c_str());
 		Ad = MatlabEngine::getMatrix("Ad");
 		Bd = MatlabEngine::getMatrix("Bd");
 		Cd = MatlabEngine::getMatrix("Cd");
@@ -49,6 +51,7 @@ namespace MatlabAPI
 		, D(D)
 		, x0(x0)
 		, x(x0)
+		, lastXDot(Matrix(A.getRows(), 1))
 		, y(C.getRows(), 1)
 		, Ad(Ad)
 		, Bd(Bd)
@@ -67,6 +70,7 @@ namespace MatlabAPI
 		, D(other.D)
 		, x0(other.x0)
 		, x(other.x)
+		, lastXDot(other.lastXDot)
 		, Ad(other.Ad)
 		, Bd(other.Bd)
 		, Cd(other.Cd)
@@ -110,7 +114,8 @@ namespace MatlabAPI
 	}
 	void StateSpaceModel::processTimeStepBilinear(const Matrix& u)
 	{
-		x += (A * x + B * u) * timeStep * 0.5;
+		auto xDot = A * x + B * u;
+		x += (xDot + lastXDot) * timeStep * 0.5;
 		y = C * x + D * u;
 	}
 	                                           

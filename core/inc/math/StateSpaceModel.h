@@ -197,6 +197,7 @@ namespace MatlabAPI
 		Matrix D; // Feedthrough (or direct transmission) matrix
 		Matrix x0; // Initial state vector
 		Matrix x;  // Current state vector
+		Matrix lastXDot;  // Last state derivative (used in Bilinear)
 		Matrix y;  // Current output vector
 
 		Matrix Ad; // System matrix
