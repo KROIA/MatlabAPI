@@ -167,9 +167,10 @@ namespace MatlabAPI
 		return widget;
 	}
 #else
-	QWidget* LibraryInfo::createInfoWidget(QWidget* parent)
+	QWidget* LibraryInfo::createInfoWidget(QWidget* parent, bool disableHyperlink)
 	{
 		MATLAB_API_UNUSED(parent);
+		MATLAB_API_UNUSED(disableHyperlink);
 		return nullptr;
 	}
 #endif
